@@ -62,7 +62,6 @@ class Button:
         button_rect = self.rect
         if left_click and button_rect.collidepoint(mouse_pos) and self.enabled:
             return True
-
         else:
             return False
 
@@ -80,82 +79,72 @@ def draw_input_screen(exam_date, wake_time, sleep_time):
     sleep_time_label = font.render("Sleep Time (HH:MM):", True, BLACK)
     screen.blit(sleep_time_label, (80, 310))
 
+def draw_schedule_screen(time_blocks):
+    screen.fill("darkslategray4")
+    title = title_font.render("Your Schedule", True, WHITE)
+    screen.blit(title, (290, 40))
+
 
 def main():
     exam_date = ''
     wake_time = ''
     sleep_time = ''
     active_block = None
-    active_input = False
     current_screen = "input"
     time_blocks = []
-    new_press = True
 
     running = True
     while running:
         screen.fill('darkslategray4')
-        draw_input_screen(exam_date, wake_time, sleep_time)
 
-        generate_sched_button = Button('Generate Schedule!', 275, 450, 245, 50, True, 'black')
-        exam_date_input = Button(exam_date, 330, 195, 400, 40, True)
-        wake_time_input = Button(wake_time, 330, 250, 400, 40, True)
-        sleep_time_input = Button(sleep_time, 330, 305, 400, 40, True)
+        if current_screen == "input":
+            draw_input_screen(exam_date, wake_time, sleep_time)
 
-        # if pygame.mouse.get_pressed()[0] and new_press == True:
-        #     new_press = False
-        #     if generate_sched_button.check_click():
-        #         if button_enabled:
-        #             button_enabled = False
-        #             #generated schedule function
-        #         else:
-        #             button_enabled = True
+            generate_sched_button = Button('Generate Schedule!', 275, 450, 245, 50, True, 'black')
+            exam_date_input = Button(exam_date, 330, 195, 400, 40, True)
+            wake_time_input = Button(wake_time, 330, 250, 400, 40, True)
+            sleep_time_input = Button(sleep_time, 330, 305, 400, 40, True)
 
-        # if not pygame.mouse.get_pressed()[0] and not new_press:
-        #     new_press = True
-        #
+        elif current_screen == "schedule":
+            draw_schedule_screen(time_blocks)
 
         for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if exam_date_input.rect.collidepoint(event.pos):
-                    active_block = "exam"
+            if current_screen == "input":
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if exam_date_input.rect.collidepoint(event.pos):
+                        active_block = "exam"
 
-                elif wake_time_input.rect.collidepoint(event.pos):
-                    active_block = "wake"
+                    elif wake_time_input.rect.collidepoint(event.pos):
+                        active_block = "wake"
 
-                elif sleep_time_input.rect.collidepoint(event.pos):
-                    active_block = "sleep"
+                    elif sleep_time_input.rect.collidepoint(event.pos):
+                        active_block = "sleep"
 
-                elif generate_sched_button.rect.collidepoint(event.pos):
-                    pass
-                    #generate sched function
-                else:
-                    active_block =None
-
-            if event.type == pygame.KEYDOWN:
-                if active_block == "exam":
-                    if event.key == pygame.K_BACKSPACE:
-                        exam_date = exam_date[:-1]
                     else:
-                        exam_date += event.unicode
+                        active_block =None
 
-                elif active_block == "wake":
-                    if event.key == pygame.K_BACKSPACE:
-                        wake_time = wake_time[:-1]
-                    else:
-                        wake_time += event.unicode
-
-                elif active_block == "sleep":
-                    if event.key == pygame.K_BACKSPACE:
-                        sleep_time = sleep_time[:-1]
-                    else:
-                        sleep_time += event.unicode
+                    if generate_sched_button.check_click():
+                        current_screen = "schedule"
 
 
+                elif event.type == pygame.KEYDOWN:
+                    if active_block == "exam":
+                        if event.key == pygame.K_BACKSPACE:
+                            exam_date = exam_date[:-1]
+                        else:
+                            exam_date += event.unicode
 
+                    elif active_block == "wake":
+                        if event.key == pygame.K_BACKSPACE:
+                            wake_time = wake_time[:-1]
+                        else:
+                            wake_time += event.unicode
 
-
-
-
+                    elif active_block == "sleep":
+                        if event.key == pygame.K_BACKSPACE:
+                            sleep_time = sleep_time[:-1]
+                        else:
+                            sleep_time += event.unicode
 
             if event.type == pygame.QUIT:
                 pygame.quit()
