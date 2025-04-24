@@ -20,7 +20,7 @@ Not worrying about user input rn
 """
 
 curr_date = datetime.date.today()
-exam_date = datetime.date(2025, 4, 28) # Sample value
+exam_date = datetime.date(2025, 5, 2) # Sample value
 days = (exam_date - curr_date).days # days able to study
 
 max_hours = 8 # Sample val

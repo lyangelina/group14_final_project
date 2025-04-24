@@ -16,6 +16,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Pomodoro Study Scheduler")
 font = pygame.font.Font(None, FONT_SIZE)
 title_font = pygame.font.Font(None, 50)
+pop_up_font = pygame.font.Font(None, 25)
 
 # class TimeSlot:
 #     def __init__(self, x_pos, y_pos, size_x, size_y, date, color=WHITE):
@@ -61,6 +62,10 @@ class Button:
             return True
         else:
             return False
+
+
+
+
 #
 # class DayBlocks:
 #     def __init__(self, x_pos, y_pos, date_text, num_blocks):
@@ -80,32 +85,45 @@ class Button:
 #         for block_num, block in blocks_list:
 #             pygame.draw.rect(screen, WHITE, block)
 
+# class DayBlock:
+#     def __init__(self, date, times: list, x_pos = 15, y_pos1=100, y_pos2 = 315, color=WHITE):
+#         self.x_start = 15
+#         self.y_start = 100
+#         self.spacing = 20
+#         self.date = date
+#         self.times = times
+#         self.color = color
+#         self.draw()
+#
+#
+#     def draw(self):
+#         rect = pygame.Rect(self.x_start, self.y_start, 200, 200)
+#         pygame.draw.rect(screen, WHITE, rect)
+#         print("drew rectangle")
+
 class DayBlock:
     """
-    def __init__(self, date, times: list, num_days, x_pos = 15, y_pos1=100, y_pos2 = 315, color=WHITE):
-        self.x_start = 15
-        self.y_start = 100
-        self.spacing = 20
-        self.days = num_days
-        self.date = date
-        self.times = times
-        self.color = color
-        self.draw()
+    def __init__(self, date_str, times: [], x_start =15, y_start = 80):
+        self.x_start = x_start
+        self.y_start = y_start
+        # self.spacing = 20
+        self.color = WHITE
+
+    def shift_box_x(self):
+        self.x_start += 215
     """
-    def __init__(self, date, times: list, num_days, x_pos = 15, y_pos1=100, y_pos2 = 315, color=WHITE):
-        self.x_start = 15
-        self.y_start = 100
-        self.spacing = 20
-        self.date = date
-        self.times = times
-        self.color = color
-        self.draw()
+    def __init__(self, x_start = 15, y_start = 80):
+        self.x_start = x_start
+        self.y_start = y_start
+        # self.spacing = 20
+        # self.date = date_str
+        # self.times = times
+        self.color = WHITE
 
     def draw(self):
-        for day in range(self.days):
-            rect = pygame.Rect(self.x_start + day*self.spacing, self.y_start, 200, 200)
-            pygame.draw.rect(screen, WHITE, rect)
-
+        rect = pygame.Rect(self.x_start, self.y_start, 250, 250)
+        pygame.draw.rect(screen, WHITE, rect)
+        print("drawing")
 
 def draw_input_screen():
     title = title_font.render("Study Scheduler Setup", True, WHITE)
@@ -130,6 +148,32 @@ def draw_schedule_screen():
     screen.fill("darkslategray4")
     title = title_font.render("Your Schedule", True, WHITE)
     screen.blit(title, (275, 40))
+
+
+    x_pos = 10
+    for day in range(temp_main.days):
+        if day < 3:
+            box = DayBlock(x_pos)
+            box.draw()
+            x_pos += 265
+
+        if 3 <= day <= 5:
+            if day == 3:
+                x_pos = 10
+                y_pos = 340
+            box = DayBlock(x_pos, y_pos)
+            box.draw()
+            x_pos += 265
+
+def pop_up_window():
+    screen.fill("darkslategray4")
+
+    message = pop_up_font.render("You have plenty of time! Choose a date within 6 days!", True, BLACK)
+    pop_up = pygame.Rect(180, 250, 450, 60)
+    pygame.draw.rect(screen, WHITE, pop_up)
+    screen.blit(message, (185, 275))
+
+
 
 
 
@@ -171,10 +215,10 @@ def main():
             subject_input = Button(subjects, 330, 370, 400, 40, True)
 
         elif current_screen == "schedule":
-            # day_blocks = DayBlocks(20, 60, "04-23-2025", temp_main.days)
             draw_schedule_screen()
 
-
+        elif current_screen == "pop up":
+            pop_up_window()
 
         for event in pygame.event.get():
             if current_screen == "input":
@@ -198,7 +242,10 @@ def main():
                         active_block =None
 
                     if generate_sched_button.check_click():
-                        current_screen = "schedule"
+                        if temp_main.days > 6:
+                            current_screen = "pop up"
+                        else:
+                            current_screen = "schedule"
 
                 elif event.type == pygame.KEYDOWN:
                     if active_block == "exam":
