@@ -4,6 +4,7 @@ import temp_main
 
 
 pygame.init()
+pygame.key.set_repeat(300, 200)
 
 WIDTH, HEIGHT = 800, 600
 WHITE = (255, 255, 255)
@@ -80,6 +81,7 @@ class Button:
 #             pygame.draw.rect(screen, WHITE, block)
 
 class DayBlock:
+    """
     def __init__(self, date, times: list, num_days, x_pos = 15, y_pos1=100, y_pos2 = 315, color=WHITE):
         self.x_start = 15
         self.y_start = 100
@@ -89,7 +91,15 @@ class DayBlock:
         self.times = times
         self.color = color
         self.draw()
-
+    """
+    def __init__(self, date, times: list, num_days, x_pos = 15, y_pos1=100, y_pos2 = 315, color=WHITE):
+        self.x_start = 15
+        self.y_start = 100
+        self.spacing = 20
+        self.date = date
+        self.times = times
+        self.color = color
+        self.draw()
 
     def draw(self):
         for day in range(self.days):
@@ -194,8 +204,14 @@ def main():
                     if active_block == "exam":
                         if event.key == pygame.K_BACKSPACE:
                             exam_date = exam_date[:-1]
+                        elif len(exam_date) >= 10:
+                            continue
                         else:
-                            exam_date += event.unicode
+                            if event.unicode.isnumeric() or event.unicode == '-':
+                                exam_date += event.unicode
+                            else:
+                                continue
+                            #exam_date += event.unicode
 
                     elif active_block == "wake":
                         if event.key == pygame.K_BACKSPACE:
@@ -230,3 +246,9 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+# days = []
+# for i in range(days_study):
+# day_block = new DayBlock()
+# days.append(day_block)
