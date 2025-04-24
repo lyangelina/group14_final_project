@@ -157,6 +157,7 @@ def main():
 
 
     running = True
+    exam_date_str =""
     while running:
         screen.fill('darkslategray4')
 
@@ -199,16 +200,20 @@ def main():
                     if generate_sched_button.check_click():
                         current_screen = "schedule"
 
-
                 elif event.type == pygame.KEYDOWN:
                     if active_block == "exam":
+                        #exam_date_str = ""
                         if event.key == pygame.K_BACKSPACE:
                             exam_date = exam_date[:-1]
+                            exam_date_str = exam_date_str[:-1]
+                            #print(exam_date_str)
                         elif len(exam_date) >= 10:
                             continue
                         else:
                             if event.unicode.isnumeric() or event.unicode == '-':
                                 exam_date += event.unicode
+                                exam_date_str += event.unicode
+                                #print(exam_date_str)
                             else:
                                 continue
                             #exam_date += event.unicode
