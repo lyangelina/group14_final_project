@@ -79,6 +79,22 @@ class Button:
 #         for block_num, block in blocks_list:
 #             pygame.draw.rect(screen, WHITE, block)
 
+class DayBlock:
+    def __init__(self, date, times: list, num_days, x_pos = 15, y_pos1=100, y_pos2 = 315, color=WHITE):
+        self.x_start = 15
+        self.y_start = 100
+        self.spacing = 20
+        self.days = num_days
+        self.date = date
+        self.times = times
+        self.color = color
+        self.draw()
+
+
+    def draw(self):
+        for day in range(self.days):
+            rect = pygame.Rect(self.x_start + day*self.spacing, self.y_start, 200, 200)
+            pygame.draw.rect(screen, WHITE, rect)
 
 
 def draw_input_screen():
@@ -104,6 +120,10 @@ def draw_schedule_screen():
     screen.fill("darkslategray4")
     title = title_font.render("Your Schedule", True, WHITE)
     screen.blit(title, (275, 40))
+
+
+
+
 
     # dayblocks.fill_block()
 
@@ -142,6 +162,7 @@ def main():
         elif current_screen == "schedule":
             # day_blocks = DayBlocks(20, 60, "04-23-2025", temp_main.days)
             draw_schedule_screen()
+
 
 
         for event in pygame.event.get():

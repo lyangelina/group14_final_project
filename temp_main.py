@@ -20,7 +20,7 @@ Not worrying about user input rn
 """
 
 curr_date = datetime.date.today()
-exam_date = datetime.date(2025, 4, 20) # Sample value
+exam_date = datetime.date(2025, 4, 28) # Sample value
 days = (exam_date - curr_date).days # days able to study
 
 max_hours = 8 # Sample val
@@ -61,3 +61,4 @@ def generate_schedule(exam_date: datetime.date):
 
 print(curr_date.weekday())
 print("days:", days)
+print(type(days))
