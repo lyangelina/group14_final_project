@@ -1,6 +1,7 @@
 import math
 import datetime
 import calendar
+import screens
 
 """
 Goal: Generate study schedule according to user preferences
@@ -20,7 +21,8 @@ Not worrying about user input rn
 """
 
 curr_date = datetime.date.today()
-exam_date = datetime.date(2025, 5, 2) # Sample value
+exam_date = datetime.date(2025, 4, 30) # Sample value
+# exam_date = datetime.date(int(screens.exam_date_str[0:5]))
 days = (exam_date - curr_date).days # days able to study
 
 max_hours = 8 # Sample val

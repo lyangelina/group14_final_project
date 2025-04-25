@@ -17,20 +17,8 @@ pygame.display.set_caption("Pomodoro Study Scheduler")
 font = pygame.font.Font(None, FONT_SIZE)
 title_font = pygame.font.Font(None, 50)
 pop_up_font = pygame.font.Font(None, 25)
+blocks_info_font = pygame.font.Font(None, 22)
 
-# class TimeSlot:
-#     def __init__(self, x_pos, y_pos, size_x, size_y, date, color=WHITE):
-#         self.rect = pygame.Rect(x_pos, y_pos, size_x, size_y)
-#         self.date = date
-#         self.color = color
-#         # self.draw()
-#
-#     def draw(self):
-#         pygame.draw.rect(screen, self.color, self.rect)
-#         pygame.draw.rect(screen, BLACK, self.rect, 1)
-#
-#         day_set = font.render(self.date, True, BLACK)
-#         screen.blit(day_set, (self.rect.x+5, self.rect.y + 5))
 
 class Button:
     def __init__(self, text, x_pos, y_pos, size_x, size_y, enabled, color='gray30'):
@@ -69,24 +57,26 @@ class DayBlock:
     def __init__(self, date_str, times: [], x_start =15, y_start = 80):
         self.x_start = x_start
         self.y_start = y_start
-        # self.spacing = 20
         self.color = WHITE
 
     def shift_box_x(self):
         self.x_start += 215
     """
-    def __init__(self, x_start = 15, y_start = 80):
+    def __init__(self, date_str, x_start = 15, y_start = 80):
         self.x_start = x_start
         self.y_start = y_start
-        # self.spacing = 20
-        # self.date = date_str
+        self.date_str = date_str
         # self.times = times
         self.color = WHITE
+
 
     def draw(self):
         rect = pygame.Rect(self.x_start, self.y_start, 250, 250)
         pygame.draw.rect(screen, WHITE, rect)
-        print("drawing")
+
+        date_font = blocks_info_font.render(self.date_str, True, BLACK)
+        screen.blit(date_font, (self.x_start + 10, self.y_start + 10))
+
 
 def draw_input_screen():
     title = title_font.render("Study Scheduler Setup", True, WHITE)
@@ -101,22 +91,31 @@ def draw_input_screen():
     sleep_time_label = font.render("Sleep Time (HH:MM):", True, BLACK)
     screen.blit(sleep_time_label, (80, 265))
 
-    busy_time_label = font.render("Busy Times (HH:MM):", True, BLACK)
-    screen.blit(busy_time_label, (75, 320))
+    study_time_label = font.render("Study Times (HH:MM):", True, BLACK)
+    screen.blit(study_time_label, (62, 320))
 
     subject_label = font.render("Subjects:", True, BLACK)
     screen.blit(subject_label, (210, 375))
 
-def draw_schedule_screen():
+def draw_schedule_screen(exam_date):
     screen.fill("darkslategray4")
     title = title_font.render("Your Schedule", True, WHITE)
     screen.blit(title, (275, 40))
 
+    curr_date = datetime.date.today()
+    exam_date_obj = datetime.date(int(exam_date[0:4]), int(exam_date[5:7]), int(exam_date[8:]))
+    days_till = (exam_date_obj - curr_date).days
+    # temp_main.days = days_till
+    dates = []
+    for days_past in range(days_till+1):
+        date_obj = curr_date + datetime.timedelta(days=days_past)
+        date_str = date_obj.strftime('%Y-%m-%d')
+        dates.append(date_str)
 
     x_pos = 10
-    for day in range(temp_main.days):
+    for day,date in enumerate(dates):
         if day < 3:
-            box = DayBlock(x_pos)
+            box = DayBlock(date, x_pos)
             box.draw()
             x_pos += 265
 
@@ -124,36 +123,37 @@ def draw_schedule_screen():
             if day == 3:
                 x_pos = 10
                 y_pos = 340
-            box = DayBlock(x_pos, y_pos)
+            box = DayBlock(date, x_pos, y_pos)
             box.draw()
             x_pos += 265
+
 
 def pop_up_window():
     screen.fill("darkslategray4")
 
+
     message = pop_up_font.render("You have plenty of time! Choose a date within 6 days!", True, BLACK)
     pop_up = pygame.Rect(180, 250, 450, 60)
     pygame.draw.rect(screen, WHITE, pop_up)
-    screen.blit(message, (185, 275))
-    # pop_up_window_button = Button("You have plenty of time! Choose a date within 6 days!", 180, 250, 450, 60, True,
-    #                               'white')
+    screen.blit(message, (185, 270))
 
-    # dayblocks.fill_block()
 
-    # day_blocks = []
-    # for ind_day_block, date in enumerate(range(temp_main.days)):
-    #     day_blocks.append(TimeSlot(15 + ind_day_block*60 , 80, 770, 40, str(date)))
-    #
-    # for day in day_blocks:
-    #     day.draw()
 
+def check_date(exam_date, curr_date=None):
+    curr_date = datetime.date.today()
+    exam_date_obj = datetime.date(int(exam_date[0:4]), int(exam_date[5:7]), int(exam_date[8:]))
+    days_till = (exam_date_obj - curr_date).days
+    if days_till < 0 or days_till > 6:
+        return True
+    else:
+        return
 
 
 def main():
     exam_date = ''
     wake_time = ''
     sleep_time = ''
-    busy_times = ''
+    study_times = ''
     subjects = ''
     active_block = None
     current_screen = "input"
@@ -170,18 +170,17 @@ def main():
             exam_date_input = Button(exam_date, 330, 150, 400, 40, True)
             wake_time_input = Button(wake_time, 330, 205, 400, 40, True)
             sleep_time_input = Button(sleep_time, 330, 260, 400, 40, True)
-            busy_time_input = Button(busy_times, 330, 315, 400, 40, True)
+            study_time_input = Button(study_times, 330, 315, 400, 40, True)
             subject_input = Button(subjects, 330, 370, 400, 40, True)
 
         elif current_screen == "schedule":
-            draw_schedule_screen()
+            draw_schedule_screen(exam_date)
 
         elif current_screen == "pop up":
-            pop_up_window_button = Button("You have plenty of time! Choose a date within 6 days.", 180, 250, 450, 60, True, 'white')
+            pop_up_window_button = Button("You have plenty of time! Enter a date within 6 days.", 180, 250, 450, 60, True, 'white')
             pop_up_window()
-            # pop_up_window_button = Button("You have plenty of time! Choose a date within 6 days!", 180, 250, 450, 60,
-            #                               True,
-            #                               'white')
+
+
         for event in pygame.event.get():
             if current_screen == "input":
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -194,8 +193,8 @@ def main():
                     elif sleep_time_input.rect.collidepoint(event.pos):
                         active_block = "sleep"
 
-                    elif busy_time_input.rect.collidepoint(event.pos):
-                        active_block = "busy"
+                    elif study_time_input.rect.collidepoint(event.pos):
+                        active_block = "study"
 
                     elif subject_input.rect.collidepoint(event.pos):
                         active_block = "subject"
@@ -205,15 +204,11 @@ def main():
                         active_block =None
 
                     if generate_sched_button.check_click():
-                        if temp_main.days > 6:
+                        if check_date(exam_date):
                             current_screen = "pop up"
                         else:
                             current_screen = "schedule"
 
-            # if current_screen == "pop up":
-            #     if event.type == pygame.MOUSEBUTTONDOWN:
-            #         if pop_up_window_button.rect.collidepoint(event.pos):
-            #             current_screen = "input"
 
                 elif event.type == pygame.KEYDOWN:
                     if active_block == "exam":
@@ -245,11 +240,11 @@ def main():
                         else:
                             sleep_time += event.unicode
 
-                    elif active_block == "busy":
+                    elif active_block == "study":
                         if event.key == pygame.K_BACKSPACE:
-                            busy_times= busy_times[:-1]
+                            study_times= study_times[:-1]
                         else:
-                            busy_times += event.unicode
+                            study_times += event.unicode
 
                     elif active_block == "subject":
                         if event.key == pygame.K_BACKSPACE:
@@ -271,9 +266,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-# days = []
-# for i in range(days_study):
-# day_block = new DayBlock()
-# days.append(day_block)
