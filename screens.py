@@ -64,43 +64,6 @@ class Button:
             return False
 
 
-
-
-#
-# class DayBlocks:
-#     def __init__(self, x_pos, y_pos, date_text, num_blocks):
-#         self.date_text = date_text
-#         self.x_pos = x_pos
-#         self.y_pos = y_pos
-#         self.num_blocks = num_blocks
-#
-#     def fill_block(self):
-#         # num_blocks = list(self.num_blocks)
-#         blocks_list = []
-#         for block_num in range(self.num_blocks):
-#             size_x = (WIDTH - 10) / self.num_blocks
-#             size_y = (HEIGHT - 50) / self.num_blocks
-#             blocks_list.append((block_num,pygame.Rect(self.x_pos, self.y_pos, size_x, size_y)))
-#
-#         for block_num, block in blocks_list:
-#             pygame.draw.rect(screen, WHITE, block)
-
-# class DayBlock:
-#     def __init__(self, date, times: list, x_pos = 15, y_pos1=100, y_pos2 = 315, color=WHITE):
-#         self.x_start = 15
-#         self.y_start = 100
-#         self.spacing = 20
-#         self.date = date
-#         self.times = times
-#         self.color = color
-#         self.draw()
-#
-#
-#     def draw(self):
-#         rect = pygame.Rect(self.x_start, self.y_start, 200, 200)
-#         pygame.draw.rect(screen, WHITE, rect)
-#         print("drew rectangle")
-
 class DayBlock:
     """
     def __init__(self, date_str, times: [], x_start =15, y_start = 80):
@@ -172,12 +135,8 @@ def pop_up_window():
     pop_up = pygame.Rect(180, 250, 450, 60)
     pygame.draw.rect(screen, WHITE, pop_up)
     screen.blit(message, (185, 275))
-
-
-
-
-
-
+    # pop_up_window_button = Button("You have plenty of time! Choose a date within 6 days!", 180, 250, 450, 60, True,
+    #                               'white')
 
     # dayblocks.fill_block()
 
@@ -218,8 +177,11 @@ def main():
             draw_schedule_screen()
 
         elif current_screen == "pop up":
+            pop_up_window_button = Button("You have plenty of time! Choose a date within 6 days.", 180, 250, 450, 60, True, 'white')
             pop_up_window()
-
+            # pop_up_window_button = Button("You have plenty of time! Choose a date within 6 days!", 180, 250, 450, 60,
+            #                               True,
+            #                               'white')
         for event in pygame.event.get():
             if current_screen == "input":
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -238,6 +200,7 @@ def main():
                     elif subject_input.rect.collidepoint(event.pos):
                         active_block = "subject"
 
+
                     else:
                         active_block =None
 
@@ -246,6 +209,11 @@ def main():
                             current_screen = "pop up"
                         else:
                             current_screen = "schedule"
+
+            # if current_screen == "pop up":
+            #     if event.type == pygame.MOUSEBUTTONDOWN:
+            #         if pop_up_window_button.rect.collidepoint(event.pos):
+            #             current_screen = "input"
 
                 elif event.type == pygame.KEYDOWN:
                     if active_block == "exam":
@@ -288,6 +256,11 @@ def main():
                             subjects = subjects[:-1]
                         else:
                             subjects += event.unicode
+
+            elif current_screen == "pop up":
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if pop_up_window_button.rect.collidepoint(event.pos):
+                        current_screen = "input"
 
             if event.type == pygame.QUIT:
                 pygame.quit()
