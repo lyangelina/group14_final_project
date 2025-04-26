@@ -109,6 +109,15 @@ def draw_input_screen():
     screen.blit(subject_label, (210, 375))
 
 def draw_schedule_screen(exam_date):
+    """
+    Draws the schedule screen based on the provided exam date.
+
+    This function clears the screen and displays "Your Schedule" title, generates a list of dates from today up to the exam date. 
+    It craetes and draws DayBlock objects for each date, organizing them into two rows: the first 3 days on the top row and the next three days on the second row. 
+
+    Args: 
+    exam_date (str): In 'YYYY-MM-DD' format.
+    """
     screen.fill("darkslategray4")
     title = title_font.render("Your Schedule", True, WHITE)
     screen.blit(title, (275, 40))
