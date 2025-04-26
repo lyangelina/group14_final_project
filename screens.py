@@ -79,6 +79,17 @@ class DayBlock:
 
 
 def draw_input_screen():
+    def draw_input_screen():
+    """
+    Draws initial input screen for study schedule 
+    Function renders and displays the title and input labels on the screen:
+        - Exam date
+        - Wake up time
+        - Sleep time
+        - Study times
+        - Subjects
+    
+    """
     title = title_font.render("Study Scheduler Setup", True, WHITE)
     screen.blit(title, (200, 100))
 
