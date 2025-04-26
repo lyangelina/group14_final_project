@@ -149,6 +149,11 @@ def draw_schedule_screen(exam_date):
 
 
 def pop_up_window():
+    """
+    Displays a pop-up window to handle invalid exam date inputs.
+
+    The function clears the screen and shosw a message prompting the user to select an exam date within 6 days if their original input is too far in the future. It creates a white rectangle as the pop-up box and renders a wanring message inside it. 
+    """
     screen.fill("darkslategray4")
 
 
