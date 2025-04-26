@@ -93,7 +93,6 @@ class DayBlock:
 
 
 def draw_input_screen():
-    def draw_input_screen():
     """
     Draws initial input screen for study schedule 
     Function renders and displays the title and input labels on the screen:
@@ -196,6 +195,7 @@ def main():
     subjects = ''
     active_block = None
     current_screen = "input"
+    times = []
 
 
     running = True
@@ -213,10 +213,10 @@ def main():
             subject_input = Button(subjects, 330, 370, 400, 40, True)
 
         elif current_screen == "schedule":
-            draw_schedule_screen(exam_date)
+            draw_schedule_screen(exam_date, times, words_per_time)
 
         elif current_screen == "pop up":
-            pop_up_window_button = Button("You have plenty of time! Enter a date within 6 days.", 180, 250, 450, 60, True, 'white')
+            pop_up_window_button = Button("None", 180, 250, 450, 60, True, 'white')
             pop_up_window()
 
 
@@ -246,6 +246,8 @@ def main():
                         if check_date(exam_date):
                             current_screen = "pop up"
                         else:
+                            times.extend([wake_time, study_times, sleep_time])
+                            words_per_time = ["Wake up!", f"Study {subjects} in 30 minute increments with a 5 minute break in between", "Sleep!"]
                             current_screen = "schedule"
 
 
@@ -270,8 +272,13 @@ def main():
                     elif active_block == "wake":
                         if event.key == pygame.K_BACKSPACE:
                             wake_time = wake_time[:-1]
+                        elif len(wake_time) >= 5:
+                            continue
                         else:
-                            wake_time += event.unicode
+                            if event.unicode.isnumeric() or event.unicode == ":":
+                                wake_time += event.unicode
+                            else: 
+                                continue
 
                     elif active_block == "sleep":
                         if event.key == pygame.K_BACKSPACE:
