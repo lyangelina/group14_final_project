@@ -16,8 +16,9 @@ pygame.display.set_caption("Pomodoro Study Scheduler")
 font = pygame.font.Font(None, FONT_SIZE)
 title_font = pygame.font.Font(None, 50)
 pop_up_font = pygame.font.Font(None, 25)
-blocks_info_font = pygame.font.Font(None, 22)
-pomodoro_sentence_dont = pygame.font.Font(None, 22)
+date_info_font = pygame.font.Font(None, 30)
+blocks_info_font = pygame.font.Font(None, 25)
+pomodoro_sentence_font = pygame.font.Font(None, 22)
 
 
 class Button:
@@ -66,7 +67,7 @@ class DayBlock:
         rect = pygame.Rect(self.x_start, self.y_start, 250, 250)
         pygame.draw.rect(screen, WHITE, rect)
 
-        date_font = blocks_info_font.render(self.date_str, True, BLACK)
+        date_font = date_info_font.render(self.date_str, True, BLACK)
         screen.blit(date_font, (self.x_start + 10, self.y_start + 10))
 
         y_offset = self.y_start + 45
@@ -76,12 +77,12 @@ class DayBlock:
             words = phrase.split(" ")
             line = ""
             line_num = 0
-            for word in words: 
+            for word in words:
                 check_line = line + word + " "
                 text = pomodoro_sentence_font.render(check_line, True, BLACK)
                 if text.get_width() < 180:
                     line = check_line
-                else: 
+                else:
                     printed_line = pomodoro_sentence_font.render(line, True, BLACK)
                     screen.blit(printed_line, (self.x_start + 58, y_offset + line_num * 20))
                     line = word + " "
@@ -89,47 +90,49 @@ class DayBlock:
             printed_line = pomodoro_sentence_font.render(line, True, BLACK)
             screen.blit(printed_line, (self.x_start + 58, y_offset + line_num * 20))
             y_offset += (line_num + 1) * 20 + 10
-                                                                        
+
 
 
 def draw_input_screen():
     """
-    Draws initial input screen for study schedule 
+    Draws initial input screen for study schedule
     Function renders and displays the title and input labels on the screen:
         - Exam date
         - Wake up time
         - Sleep time
         - Study times
         - Subjects
-    
+
     """
     title = title_font.render("Study Scheduler Setup", True, WHITE)
     screen.blit(title, (200, 100))
 
     exam_date_label = font.render("Exam Date (YYYY-MM-DD):", True, BLACK)
-    screen.blit(exam_date_label, (15, 155))
+    screen.blit(exam_date_label, (15, 160))
 
     wake_time_label = font.render("Wake Up Time (HH:MM):", True, BLACK)
-    screen.blit(wake_time_label, (45, 210))
+    screen.blit(wake_time_label, (45, 215))
 
     sleep_time_label = font.render("Sleep Time (HH:MM):", True, BLACK)
-    screen.blit(sleep_time_label, (80, 265))
+    screen.blit(sleep_time_label, (80, 270))
 
     study_time_label = font.render("Study Times (HH:MM):", True, BLACK)
-    screen.blit(study_time_label, (62, 320))
+    screen.blit(study_time_label, (62, 325))
 
     subject_label = font.render("Subjects:", True, BLACK)
-    screen.blit(subject_label, (210, 375))
+    screen.blit(subject_label, (210, 380))
 
-def draw_schedule_screen(exam_date):
+def draw_schedule_screen(exam_date: str, times: list, words_per_time: list):
     """
     Draws the schedule screen based on the provided exam date.
 
-    This function clears the screen and displays "Your Schedule" title, generates a list of dates from today up to the exam date. 
-    It craetes and draws DayBlock objects for each date, organizing them into two rows: the first 3 days on the top row and the next three days on the second row. 
+    This function clears the screen and displays "Your Schedule" title, generates a list of dates from today up to the exam date.
+    It creates and draws DayBlock objects for each date, organizing them into two rows: the first 3 days on the top row and the next three days on the second row.
 
-    Args: 
+    Args:
     exam_date (str): In 'YYYY-MM-DD' format.
+    times (list): the times that are going to be displayed on the block
+    words_per_time (list): the phrase associated with each time
     """
     screen.fill("darkslategray4")
     title = title_font.render("Your Schedule", True, WHITE)
@@ -138,7 +141,6 @@ def draw_schedule_screen(exam_date):
     curr_date = datetime.date.today()
     exam_date_obj = datetime.date(int(exam_date[0:4]), int(exam_date[5:7]), int(exam_date[8:]))
     days_till = (exam_date_obj - curr_date).days
-    # temp_main.days = days_till
     dates = []
     for days_past in range(days_till+1):
         date_obj = curr_date + datetime.timedelta(days=days_past)
@@ -148,7 +150,7 @@ def draw_schedule_screen(exam_date):
     x_pos = 10
     for day,date in enumerate(dates):
         if day < 3:
-            box = DayBlock(date, x_pos)
+            box = DayBlock(date, times, words_per_time, x_pos)
             box.draw()
             x_pos += 265
 
@@ -156,7 +158,7 @@ def draw_schedule_screen(exam_date):
             if day == 3:
                 x_pos = 10
                 y_pos = 340
-            box = DayBlock(date, x_pos, y_pos)
+            box = DayBlock(date, times, words_per_time, x_pos, y_pos)
             box.draw()
             x_pos += 265
 
@@ -165,7 +167,7 @@ def pop_up_window():
     """
     Displays a pop-up window to handle invalid exam date inputs.
 
-    The function clears the screen and shosw a message prompting the user to select an exam date within 6 days if their original input is too far in the future. It creates a white rectangle as the pop-up box and renders a wanring message inside it. 
+    The function clears the screen and shows a message prompting the user to select an exam date within 6 days if their original input is too far in the future. It creates a white rectangle as the pop-up box and renders a wanring message inside it.
     """
     screen.fill("darkslategray4")
 
@@ -175,9 +177,9 @@ def pop_up_window():
     pygame.draw.rect(screen, WHITE, pop_up)
     screen.blit(message, (185, 270))
 
-
-
-def check_date(exam_date, curr_date=None):
+def check_date(exam_date):
+    if exam_date == '':
+        return True
     curr_date = datetime.date.today()
     exam_date_obj = datetime.date(int(exam_date[0:4]), int(exam_date[5:7]), int(exam_date[8:]))
     days_till = (exam_date_obj - curr_date).days
@@ -247,7 +249,8 @@ def main():
                             current_screen = "pop up"
                         else:
                             times.extend([wake_time, study_times, sleep_time])
-                            words_per_time = ["Wake up!", f"Study {subjects} in 30 minute increments with a 5 minute break in between", "Sleep!"]
+                            words_per_time = ["Wake up!", f"Study {subjects} in 30 minute increments with a 5 minute break in between",
+                                              "Sleep!"]
                             current_screen = "schedule"
 
 
@@ -277,7 +280,7 @@ def main():
                         else:
                             if event.unicode.isnumeric() or event.unicode == ":":
                                 wake_time += event.unicode
-                            else: 
+                            else:
                                 continue
 
                     elif active_block == "sleep":
