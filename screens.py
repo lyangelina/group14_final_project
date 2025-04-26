@@ -8,7 +8,6 @@ pygame.key.set_repeat(300, 200)
 
 WIDTH, HEIGHT = 800, 600
 WHITE = (255, 255, 255)
-BLUE = (100, 149, 237)
 BLACK = (0, 0, 0)
 FONT_SIZE = 35
 
@@ -18,6 +17,7 @@ font = pygame.font.Font(None, FONT_SIZE)
 title_font = pygame.font.Font(None, 50)
 pop_up_font = pygame.font.Font(None, 25)
 blocks_info_font = pygame.font.Font(None, 22)
+pomodoro_sentence_dont = pygame.font.Font(None, 22)
 
 
 class Button:
@@ -53,21 +53,13 @@ class Button:
 
 
 class DayBlock:
-    """
-    def __init__(self, date_str, times: [], x_start =15, y_start = 80):
-        self.x_start = x_start
-        self.y_start = y_start
-        self.color = WHITE
-
-    def shift_box_x(self):
-        self.x_start += 215
-    """
-    def __init__(self, date_str, x_start = 15, y_start = 80):
+    def __init__(self, date_str, times, words_per_time, x_start = 15, y_start = 80):
         self.x_start = x_start
         self.y_start = y_start
         self.date_str = date_str
-        # self.times = times
+        self.times = times
         self.color = WHITE
+        self.words = words_per_time
 
 
     def draw(self):
@@ -76,6 +68,28 @@ class DayBlock:
 
         date_font = blocks_info_font.render(self.date_str, True, BLACK)
         screen.blit(date_font, (self.x_start + 10, self.y_start + 10))
+
+        y_offset = self.y_start + 45
+        for ind, (time, phrase) in enumerate(zip(self.times, self.words)):
+            time_font = blocks_info_font.render(f"{time}:"), True, BLACK
+            screen.blit(time_font, (self.x_start + 10, y_offset))
+            words = phrase.split(" ")
+            line = ""
+            line_num = 0
+            for word in words: 
+                check_line = line + word + " "
+                text = pomodoro_sentence_font.render(check_line, True, BLACK)
+                if text.get_width() < 180:
+                    line = check_line
+                else: 
+                    printed_line = pomodoro_sentence_font.render(line, True, BLACK)
+                    screen.blit(printed_line, (self.x_start + 58, y_offset + line_num * 20))
+                    line = word + " "
+                    line_num += 1
+            printed_line = pomodoro_sentence_font.render(line, True, BLACK)
+            screen.blit(printed_line, (self.x_start + 58, y_offset + line_num * 20))
+            y_offset += (line_num + 1) * 20 + 10
+                                                                        
 
 
 def draw_input_screen():
