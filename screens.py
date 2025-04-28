@@ -19,7 +19,7 @@ blocks_info_font = pygame.font.Font(None, 22)
 pomodoro_sentence_font = pygame.font.Font(None, 20)
 
 class Button:
-    def __init__(self, text, x_pos, y_pos, size_x, size_y, enabled, color='gray30'):
+    def __init__(self, text: str, x_pos: int, y_pos: int, size_x: int, size_y: int, enabled: bool, color: str ='gray30'):
         self.rect = pygame.Rect(x_pos, y_pos, size_x, size_y)
         self.text = text
         self.x_pos = x_pos
@@ -56,7 +56,7 @@ class Button:
             return False
 
 class DayBlock:
-    def __init__(self, date_str, times, words_per_time, x_start = 15, y_start = 80):
+    def __init__(self, date_str: str, times: list, words_per_time: list, x_start: int = 15, y_start: int = 80):
         self.x_start = x_start
         self.y_start = y_start
         self.date_str = date_str
@@ -176,7 +176,7 @@ def pop_up_window():
     pygame.draw.rect(screen, WHITE, pop_up)
     screen.blit(message, (185, 270))
 
-def check_date(exam_date):
+def check_date(exam_date: str):
     """
     Validates whether the date is in the future and within 6 days of the current date.
     Takes in the exam_date string from the user input on the input screen. Returns True or False depending on validity of date.
