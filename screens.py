@@ -1,7 +1,5 @@
 import pygame
 import datetime
-import temp_main
-
 
 pygame.init()
 pygame.key.set_repeat(300, 200)
@@ -17,9 +15,8 @@ font = pygame.font.Font(None, FONT_SIZE)
 title_font = pygame.font.Font(None, 50)
 pop_up_font = pygame.font.Font(None, 25)
 date_info_font = pygame.font.Font(None, 30)
-blocks_info_font = pygame.font.Font(None, 25)
-pomodoro_sentence_font = pygame.font.Font(None, 22)
-
+blocks_info_font = pygame.font.Font(None, 22)
+pomodoro_sentence_font = pygame.font.Font(None, 20)
 
 class Button:
     def __init__(self, text, x_pos, y_pos, size_x, size_y, enabled, color='gray30'):
@@ -58,7 +55,6 @@ class Button:
         else:
             return False
 
-
 class DayBlock:
     def __init__(self, date_str, times, words_per_time, x_start = 15, y_start = 80):
         self.x_start = x_start
@@ -67,7 +63,6 @@ class DayBlock:
         self.times = times
         self.color = WHITE
         self.words = words_per_time
-
 
     def draw(self):
         """
@@ -93,14 +88,12 @@ class DayBlock:
                     line = check_line
                 else:
                     printed_line = pomodoro_sentence_font.render(line, True, BLACK)
-                    screen.blit(printed_line, (self.x_start + 58, y_offset + 2 + line_num * 20))
+                    screen.blit(printed_line, (self.x_start + 58, y_offset + 1 + line_num * 20))
                     line = word + " "
                     line_num += 1
             printed_line = pomodoro_sentence_font.render(line, True, BLACK)
-            screen.blit(printed_line, (self.x_start + 60, y_offset + 2 + line_num * 20))
+            screen.blit(printed_line, (self.x_start + 60, y_offset + 1 + line_num * 20))
             y_offset += (line_num + 1) * 20 + 10
-
-
 
 def draw_input_screen():
     """
@@ -111,7 +104,6 @@ def draw_input_screen():
         - Sleep time
         - Study times
         - Subjects
-
     """
     title = title_font.render("Study Scheduler Setup", True, WHITE)
     screen.blit(title, (200, 100))
@@ -171,7 +163,6 @@ def draw_schedule_screen(exam_date: str, times: list, words_per_time: list):
             box.draw()
             x_pos += 265
 
-
 def pop_up_window():
     """
     Displays a pop-up window to handle invalid exam date inputs.
@@ -179,7 +170,6 @@ def pop_up_window():
     The function clears the screen and shows a message prompting the user to select an exam date within 6 days if their original input is too far in the future. It creates a white rectangle as the pop-up box and renders a wanring message inside it.
     """
     screen.fill("darkslategray4")
-
 
     message = pop_up_font.render("You have plenty of time! Choose a date within 6 days!", True, BLACK)
     pop_up = pygame.Rect(180, 250, 450, 60)
@@ -201,7 +191,6 @@ def check_date(exam_date):
     else:
         return
 
-
 def main():
     exam_date = ''
     wake_time = ''
@@ -211,7 +200,6 @@ def main():
     active_block = None
     current_screen = "input"
     times = []
-
 
     running = True
     exam_date_str =""
@@ -233,7 +221,6 @@ def main():
         elif current_screen == "pop up":
             pop_up_window_button = Button("None", 180, 250, 450, 60, True, 'white')
             pop_up_window()
-
 
         for event in pygame.event.get():
             if current_screen == "input":
@@ -269,24 +256,19 @@ def main():
                                               "Sleep!"]
                             current_screen = "schedule"
 
-
                 elif event.type == pygame.KEYDOWN:
                     if active_block == "exam":
-                        #exam_date_str = ""
                         if event.key == pygame.K_BACKSPACE:
                             exam_date = exam_date[:-1]
                             exam_date_str = exam_date_str[:-1]
-                            #print(exam_date_str)
                         elif len(exam_date) >= 10:
                             continue
                         else:
                             if event.unicode.isnumeric() or event.unicode == '-':
                                 exam_date += event.unicode
                                 exam_date_str += event.unicode
-                                #print(exam_date_str)
                             else:
                                 continue
-                            #exam_date += event.unicode
 
                     elif active_block == "wake":
                         if event.key == pygame.K_BACKSPACE:
@@ -325,7 +307,6 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 running = False
-
 
         pygame.display.flip()
 
