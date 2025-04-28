@@ -32,6 +32,9 @@ class Button:
         self.draw()
 
     def draw(self):
+        """
+        Draws the button on the screen with the words and in the specific location on the screen.
+        """
         text_surface = font.render(self.text, True, WHITE)
         if self.enabled:
             if self.check_click():
@@ -44,6 +47,9 @@ class Button:
         screen.blit(text_surface, (self.x_pos + 5, self.y_pos + 12))
 
     def check_click(self):
+        """
+        Returns True or False depending on if the rectangle of the button was clicked.
+        """
         mouse_pos = pygame.mouse.get_pos()
         left_click = pygame.mouse.get_pressed()[0]
         button_rect = self.rect
@@ -64,6 +70,9 @@ class DayBlock:
 
 
     def draw(self):
+        """
+        Draws each individual DayBlock on the screen with its schedule details. DayBlock is drawn in the proper location by adjusting the x_start and y_start per DayBlock.
+        """
         rect = pygame.Rect(self.x_start, self.y_start, 250, 250)
         pygame.draw.rect(screen, WHITE, rect)
 
@@ -72,7 +81,7 @@ class DayBlock:
 
         y_offset = self.y_start + 45
         for ind, (time, phrase) in enumerate(zip(self.times, self.words)):
-            time_font = blocks_info_font.render(f"{time}:"), True, BLACK
+            time_font = blocks_info_font.render(f"{time}:", True, BLACK)
             screen.blit(time_font, (self.x_start + 10, y_offset))
             words = phrase.split(" ")
             line = ""
@@ -84,11 +93,11 @@ class DayBlock:
                     line = check_line
                 else:
                     printed_line = pomodoro_sentence_font.render(line, True, BLACK)
-                    screen.blit(printed_line, (self.x_start + 58, y_offset + line_num * 20))
+                    screen.blit(printed_line, (self.x_start + 58, y_offset + 2 + line_num * 20))
                     line = word + " "
                     line_num += 1
             printed_line = pomodoro_sentence_font.render(line, True, BLACK)
-            screen.blit(printed_line, (self.x_start + 58, y_offset + line_num * 20))
+            screen.blit(printed_line, (self.x_start + 60, y_offset + 2 + line_num * 20))
             y_offset += (line_num + 1) * 20 + 10
 
 
@@ -178,6 +187,10 @@ def pop_up_window():
     screen.blit(message, (185, 270))
 
 def check_date(exam_date):
+    """
+    Validates whether the date is in the future and within 6 days of the current date.
+    Takes in the exam_date string from the user input on the input screen. Returns True or False depending on validity of date.
+    """
     if exam_date == '':
         return True
     curr_date = datetime.date.today()
@@ -240,7 +253,6 @@ def main():
                     elif subject_input.rect.collidepoint(event.pos):
                         active_block = "subject"
 
-
                     else:
                         active_block =None
 
@@ -249,7 +261,11 @@ def main():
                             current_screen = "pop up"
                         else:
                             times.extend([wake_time, study_times, sleep_time])
-                            words_per_time = ["Wake up!", f"Study {subjects} in 30 minute increments with a 5 minute break in between",
+                            if len(subjects) > 1:
+                                subjects = subjects.split(",")
+                                subjects = ' and '.join(subjects)
+
+                            words_per_time = ["Wake up!", f"Study {subjects} in eight 30 minute increments with 5 minute breaks in between, and a 15 minute break after four sessions.",
                                               "Sleep!"]
                             current_screen = "schedule"
 
