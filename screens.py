@@ -284,14 +284,24 @@ def main():
                     elif active_block == "sleep":
                         if event.key == pygame.K_BACKSPACE:
                             sleep_time = sleep_time[:-1]
+                        elif len(sleep_time) >= 5:
+                            continue
                         else:
-                            sleep_time += event.unicode
+                            if event.unicode.isnumeric() or event.unicode == ":":
+                                sleep_time += event.unicode
+                            else:
+                                continue
 
                     elif active_block == "study":
                         if event.key == pygame.K_BACKSPACE:
                             study_times= study_times[:-1]
+                        elif len(study_times) >= 5:
+                            continue
                         else:
-                            study_times += event.unicode
+                            if event.unicode.isnumeric() or event.unicode == ":":
+                                study_times += event.unicode
+                            else:
+                                continue
 
                     elif active_block == "subject":
                         if event.key == pygame.K_BACKSPACE:
